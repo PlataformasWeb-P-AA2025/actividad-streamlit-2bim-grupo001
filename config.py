@@ -2,4 +2,4 @@
 #
 # cadena conector a la base de datos
 #
-cadena_base_datos = 'sqlite:///demobase.db' 
+cadena_base_datos = 'sqlite:///FutRedx.db' 

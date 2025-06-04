@@ -12,61 +12,40 @@ engine = create_engine(cadena_base_datos)
 
 Base = declarative_base()
 
-class Departamento(Base):
-    __tablename__ = 'departamento'
-    id       = Column(Integer, primary_key=True)
-    nombre   = Column(String(100))
-    cursos   = relationship('Curso', back_populates='departamento')
+class Usuario(Base):
+    __tablename__ = 'usuario'
+    id = Column(Integer, primary_key=True)
+    nombre_usuario = Column(String(500), nullable=False)
 
-class Instructor(Base):
-    __tablename__ = 'instructor'
-    id       = Column(Integer, primary_key=True)
-    nombre   = Column(String(200))
-    cursos   = relationship('Curso', back_populates='instructor')
+    publicaciones = relationship("Publicacion", back_populates="usuario")
+    reacciones = relationship("Reaccion", back_populates="usuario")
 
-class Curso(Base):
-    __tablename__ = 'curso'
-    id              = Column(Integer, primary_key=True)
-    titulo          = Column(String(200))
-    departamento_id = Column(Integer, ForeignKey('departamento.id'))
-    instructor_id   = Column(Integer, ForeignKey('instructor.id'))
-    departamento    = relationship('Departamento', back_populates='cursos')
-    instructor      = relationship('Instructor',  back_populates='cursos')
-    inscripciones   = relationship('Inscripcion', back_populates='curso')
-    tareas          = relationship('Tarea',       back_populates='curso')
+    def __repr__(self):
+        return f"Usuario: nombre={self.nombre_usuario}"
 
-class Estudiante(Base):
-    __tablename__ = 'estudiante'
-    id             = Column(Integer, primary_key=True)
-    nombre         = Column(String(200))
-    inscripciones  = relationship('Inscripcion', back_populates='estudiante')
-    entregas       = relationship('Entrega',     back_populates='estudiante')
+class Publicacion(Base):
+    __tablename__ = 'publicacion'
+    id = Column(Integer, primary_key=True)
+    contenido = Column(String(500), nullable=False)
+    usuario_id = Column(Integer, ForeignKey("usuario.id"))
 
-class Inscripcion(Base):
-    __tablename__ = 'inscripcion'
-    estudiante_id = Column(Integer, ForeignKey('estudiante.id'), primary_key=True)
-    curso_id      = Column(Integer, ForeignKey('curso.id'),      primary_key=True)
-    fecha_inscripcion = Column(DateTime)
-    estudiante    = relationship('Estudiante', back_populates='inscripciones')
-    curso         = relationship('Curso',      back_populates='inscripciones')
+    usuario = relationship("Usuario", back_populates="publicaciones")
+    reacciones = relationship("Reaccion", back_populates="publicacion")
 
-class Tarea(Base):
-    __tablename__ = 'tarea'
-    id        = Column(Integer, primary_key=True)
-    curso_id  = Column(Integer, ForeignKey('curso.id'))
-    titulo    = Column(String(200))
-    fecha_entrega = Column(DateTime)
-    curso     = relationship('Curso',    back_populates='tareas')
-    entregas  = relationship('Entrega',  back_populates='tarea')
+    def __repr__(self):
+        return f"Publicacion: {self.contenido}"
 
-class Entrega(Base):
-    __tablename__ = 'entrega'
-    id          = Column(Integer, primary_key=True)
-    tarea_id    = Column(Integer, ForeignKey('tarea.id'))
-    estudiante_id = Column(Integer, ForeignKey('estudiante.id'))
-    fecha_envio = Column(DateTime)
-    calificacion = Column(Numeric)
-    tarea        = relationship('Tarea',     back_populates='entregas')
-    estudiante   = relationship('Estudiante',back_populates='entregas')
+class Reaccion(Base):
+    __tablename__ = 'reaccion'
+    id = Column(Integer, primary_key=True)
+    publicacion_id = Column(Integer, ForeignKey("publicacion.id"))
+    usuario_id = Column(Integer, ForeignKey("usuario.id"))
+    tipo_reaccion = Column(String(100), nullable=False)
+
+    publicacion = relationship("Publicacion", back_populates="reacciones")
+    usuario = relationship("Usuario", back_populates="reacciones")
+
+    def __repr__(self):
+        return f"Usuario: {self.usuario.nombre_usuario}\nPublicacion: {self.publicacion.contenido}\nTipo_reaccion: {self.tipo_reaccion}"
 
 Base.metadata.create_all(engine)
