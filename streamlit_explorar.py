@@ -3,6 +3,7 @@
 import streamlit as st
 from db import get_session
 from clases import Usuario, Publicacion, Reaccion
+import consulta1, consulta2, consulta3, consulta4, consulta5
 
 st.set_page_config(page_title="Base de Red FutRedx", layout="wide")
 
@@ -108,17 +109,51 @@ def listar_reacciones():
 
 def main():
     st.title("Base de Red FutRedx")
-    entidad = st.sidebar.selectbox(
-        "Selecciona una entidad:",
-        ("Usuarios", "Publicaciones", "Reacciones")
-    )
 
-    if entidad == "Usuarios":
-        listar_usuarios()
-    elif entidad == "Publicaciones":
-        listar_publicaciones()
-    elif entidad == "Reacciones":
-        listar_reacciones()
+    # Menú principal
+    menu = st.sidebar.radio("Selecciona una sección:", ("Entidades", "Consultas"))
+
+    if menu == "Entidades":
+        entidad = st.sidebar.selectbox(
+            "Selecciona una entidad:",
+            ("Usuarios", "Publicaciones", "Reacciones")
+        )
+
+        if entidad == "Usuarios":
+            listar_usuarios()
+        elif entidad == "Publicaciones":
+            listar_publicaciones()
+        elif entidad == "Reacciones":
+            listar_reacciones()
+
+    elif menu == "Consultas":
+        consulta = st.sidebar.selectbox(
+            "Selecciona una consulta:",
+            (
+                "Consulta1 - Publicaciones por usuario",
+                "Consulta2 - Reacciones de usuario por publicación",
+                "Consulta3 - Reacciones con tipos específicos y nombre no vocal",
+                "Consulta4 - Publicaciones con todos los tipos de reacciones",
+                "Consulta5 - Publicaciones donde reaccionó un usuario"
+            )
+        )
+
+        if consulta.startswith("Consulta1"):
+            import consulta1
+            consulta1.ejecutar()
+        elif consulta.startswith("Consulta2"):
+            import consulta2
+            consulta2.ejecutar()
+        elif consulta.startswith("Consulta3"):
+            import consulta3
+            consulta3.ejecutar()
+        elif consulta.startswith("Consulta4"):
+            import consulta4
+            consulta4.ejecutar()
+        elif consulta.startswith("Consulta5"):
+            import consulta5
+            consulta5.ejecutar()
+
 
 if __name__ == "__main__":
     main()
